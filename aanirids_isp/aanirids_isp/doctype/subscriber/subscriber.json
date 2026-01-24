@@ -1,0 +1,336 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:username",
+ "creation": "2026-01-24 16:42:41.380144",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_basic",
+  "external_id",
+  "username",
+  "full_name",
+  "phone",
+  "column_break_vdxr",
+  "gender",
+  "email",
+  "status",
+  "section_personal",
+  "country",
+  "password",
+  "column_break_bcbh",
+  "date_of_birth",
+  "connection_password",
+  "section_links",
+  "nas_server",
+  "package_link",
+  "column_break_pvug",
+  "salesperson",
+  "section_billing",
+  "billing_address",
+  "billing_city",
+  "billing_zip",
+  "section_installation",
+  "installation_address",
+  "installation_city",
+  "installation_zip",
+  "section_technical",
+  "cpe_ip_address",
+  "latitude",
+  "column_break_ixir",
+  "longitude",
+  "enable_portal_login",
+  "section_kyc",
+  "id_proof_type",
+  "column_break_bbgm",
+  "id_proof_number",
+  "documents_section",
+  "document_name",
+  "column_break_ezwx",
+  "document_upload",
+  "section_sync",
+  "details_synced",
+  "column_break_uzvz",
+  "details_synced_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "Basic Info"
+  },
+  {
+   "fieldname": "external_id",
+   "fieldtype": "Data",
+   "label": "External ID",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Username",
+   "unique": 1
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "section_personal",
+   "fieldtype": "Section Break",
+   "label": "Personal Details"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale\nOther"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "Password"
+  },
+  {
+   "fieldname": "connection_password",
+   "fieldtype": "Password",
+   "label": "Connection Password"
+  },
+  {
+   "fieldname": "section_links",
+   "fieldtype": "Section Break",
+   "label": "Links"
+  },
+  {
+   "fieldname": "nas_server",
+   "fieldtype": "Link",
+   "label": "NAS Server",
+   "options": "NAS"
+  },
+  {
+   "fieldname": "package_link",
+   "fieldtype": "Link",
+   "label": "Plan",
+   "options": "Plan"
+  },
+  {
+   "fieldname": "salesperson",
+   "fieldtype": "Link",
+   "label": "Salesperson",
+   "options": "Salesperson"
+  },
+  {
+   "fieldname": "section_billing",
+   "fieldtype": "Section Break",
+   "label": "Billing Address"
+  },
+  {
+   "fieldname": "billing_address",
+   "fieldtype": "Small Text",
+   "label": "Billing Address"
+  },
+  {
+   "default": "Gulbarga",
+   "fieldname": "billing_city",
+   "fieldtype": "Data",
+   "label": "Billing City"
+  },
+  {
+   "default": "585104",
+   "fieldname": "billing_zip",
+   "fieldtype": "Data",
+   "label": "Billing ZIP"
+  },
+  {
+   "fieldname": "section_installation",
+   "fieldtype": "Section Break",
+   "label": "Installation Address"
+  },
+  {
+   "fieldname": "installation_address",
+   "fieldtype": "Small Text",
+   "label": "Installation Address"
+  },
+  {
+   "default": "Gulbarga",
+   "fieldname": "installation_city",
+   "fieldtype": "Data",
+   "label": "Installation City"
+  },
+  {
+   "default": "585104",
+   "fieldname": "installation_zip",
+   "fieldtype": "Data",
+   "label": "Installation ZIP"
+  },
+  {
+   "fieldname": "section_technical",
+   "fieldtype": "Section Break",
+   "label": "Technical"
+  },
+  {
+   "fieldname": "cpe_ip_address",
+   "fieldtype": "Data",
+   "label": "CPE IP Address"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_portal_login",
+   "fieldtype": "Check",
+   "label": "Enable Portal Login"
+  },
+  {
+   "fieldname": "section_kyc",
+   "fieldtype": "Section Break",
+   "label": "KYC / Documents"
+  },
+  {
+   "fieldname": "id_proof_type",
+   "fieldtype": "Select",
+   "label": "ID Proof Type",
+   "options": "\nAadhaar Card\nPAN Card"
+  },
+  {
+   "fieldname": "id_proof_number",
+   "fieldtype": "Data",
+   "label": "ID Proof Number"
+  },
+  {
+   "fieldname": "section_sync",
+   "fieldtype": "Section Break",
+   "label": "Sync Tracking"
+  },
+  {
+   "default": "0",
+   "fieldname": "details_synced",
+   "fieldtype": "Check",
+   "label": "Details Synced",
+   "read_only": 1
+  },
+  {
+   "fieldname": "details_synced_on",
+   "fieldtype": "Datetime",
+   "label": "Details Synced On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vdxr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_bcbh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ixir",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_uzvz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pvug",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "document_upload",
+   "fieldtype": "Attach",
+   "label": "Document Upload"
+  },
+  {
+   "fieldname": "document_name",
+   "fieldtype": "Data",
+   "label": "Document Name"
+  },
+  {
+   "fieldname": "documents_section",
+   "fieldtype": "Section Break",
+   "label": "Documents"
+  },
+  {
+   "fieldname": "column_break_bbgm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ezwx",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "icon": "octicon octicon-file-directory",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-25 21:11:09.407312",
+ "modified_by": "Administrator",
+ "module": "Aanirids Isp",
+ "name": "Subscriber",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "search_fields": "username,full_name,phone,email",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "username",
+ "track_changes": 1
+}
