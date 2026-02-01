@@ -1,17 +1,16 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:shortname",
- "creation": "2026-01-24 16:29:00.893033",
+ "autoname": "field:pool_name",
+ "creation": "2026-01-27 14:54:49.031338",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "external_id",
-  "nasname",
-  "shortname",
-  "type",
-  "ports",
-  "secret"
+  "pool_name",
+  "network",
+  "subnet",
+  "nas"
  ],
  "fields": [
   {
@@ -20,39 +19,35 @@
    "label": "External ID"
   },
   {
-   "fieldname": "nasname",
+   "fieldname": "pool_name",
    "fieldtype": "Data",
-   "label": "Nas Name(IP Address)"
-  },
-  {
-   "fieldname": "shortname",
-   "fieldtype": "Data",
-   "label": "Shortname",
+   "label": "Pool Name",
    "unique": 1
   },
   {
-   "fieldname": "type",
+   "fieldname": "network",
    "fieldtype": "Data",
-   "label": "Type"
+   "label": "Network"
   },
   {
-   "fieldname": "ports",
-   "fieldtype": "Int",
-   "label": "Ports"
+   "fieldname": "subnet",
+   "fieldtype": "Data",
+   "label": "Subnet"
   },
   {
-   "fieldname": "secret",
-   "fieldtype": "Data",
-   "label": "Secret"
+   "fieldname": "nas",
+   "fieldtype": "Link",
+   "label": "NAS",
+   "options": "NAS"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-27 14:53:53.919437",
+ "modified": "2026-01-30 18:22:52.860572",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
- "name": "NAS",
+ "name": "IP Pool",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

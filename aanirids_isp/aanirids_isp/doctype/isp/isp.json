@@ -1,25 +1,19 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:full_name",
- "creation": "2026-01-24 13:24:50.552247",
+ "autoname": "field:company_name",
+ "creation": "2026-01-30 11:51:29.454723",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "external_id",
-  "full_name",
-  "username",
-  "email",
-  "dob",
+  "company_name",
+  "owner_name",
   "phone",
-  "address",
+  "email",
+  "website",
+  "registered_number",
   "country",
-  "city",
-  "zip",
-  "identity",
-  "branch",
-  "isp",
-  "nas_group",
   "created_at",
   "updated_at"
  ],
@@ -27,70 +21,40 @@
   {
    "fieldname": "external_id",
    "fieldtype": "Int",
-   "label": "External ID",
-   "read_only": 1
+   "label": "External ID"
   },
   {
-   "fieldname": "email",
+   "fieldname": "company_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Email"
+   "label": "Company Name",
+   "unique": 1
   },
   {
-   "fieldname": "username",
+   "fieldname": "owner_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Username"
+   "label": "Owner Name"
   },
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Phone"
+   "label": "Phone",
+   "options": "Phone"
   },
   {
-   "fieldname": "address",
-   "fieldtype": "Small Text",
-   "label": "Address"
-  },
-  {
-   "fieldname": "dob",
+   "fieldname": "email",
    "fieldtype": "Data",
-   "label": "DOB"
+   "label": "Email",
+   "options": "Email"
   },
   {
-   "fieldname": "full_name",
+   "fieldname": "website",
    "fieldtype": "Data",
-   "label": "Full Name",
-   "unique": 1
-  },
-  {
-   "fieldname": "branch",
-   "fieldtype": "Link",
-   "label": "Branch",
-   "options": "Branch"
-  },
-  {
-   "fieldname": "isp",
-   "fieldtype": "Link",
-   "label": "ISP",
-   "options": "ISP"
-  },
-  {
-   "fieldname": "identity",
-   "fieldtype": "Data",
-   "label": "Identity"
+   "label": "Website"
   },
   {
    "fieldname": "country",
    "fieldtype": "Data",
    "label": "Country"
-  },
-  {
-   "fieldname": "nas_group",
-   "fieldtype": "Data",
-   "label": "NAS Group",
-   "options": "NAS Group"
   },
   {
    "fieldname": "created_at",
@@ -105,23 +69,18 @@
    "read_only": 1
   },
   {
-   "fieldname": "city",
+   "fieldname": "registered_number",
    "fieldtype": "Data",
-   "label": "City"
-  },
-  {
-   "fieldname": "zip",
-   "fieldtype": "Data",
-   "label": "Zip"
+   "label": "Registered Number"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-01 12:51:22.738809",
+ "modified": "2026-01-30 12:26:29.650285",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
- "name": "Salesperson",
+ "name": "ISP",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

@@ -1,13 +1,15 @@
+# Copyright (c) 2026, Mohammed Zeeshan and contributors
+# For license information, please see license.txt
+
 import frappe
 import requests
 from frappe.model.document import Document
 
 
-class Salesperson(Document):
-    pass
+class IPAddress(Document):
+	pass
 
-
-USERS_API_URL = "http://172.24.160.1:5003/api/users"
+IP_ADDRESS_URL = "http://172.24.160.1:5003/api/ip-addresses"
 TIMEOUT = 30
 
 def clean_datetime(dt):
@@ -27,119 +29,111 @@ def clean_datetime(dt):
         return None
 
 @frappe.whitelist()
-def sync_salespersons():
+def sync_ip_addresses():
     """
-    Sync Users from API into Salesperson DocType
+    Sync IP Addresses from API into IPAddress DocType
     Upsert based on external_id (id)
-    Works if API returns LIST or {success:true,data:[...]}
-    """
-
-    # 1) Fetch users
+    Works if API returns LIST or {success:true,data:[...]}"""
     try:
-        r = requests.get(USERS_API_URL, timeout=TIMEOUT)
+        r = requests.get(IP_ADDRESS_URL, timeout=TIMEOUT)
         r.raise_for_status()
         payload = r.json()
     except Exception as e:
-        frappe.throw(f"❌ Users API fetch failed: {str(e)}")
-
-    # ✅ 2) Handle response type (LIST or DICT)
+        frappe.throw(f"❌ IP Addresses API fetch failed: {str(e)}")
+    
     if isinstance(payload, list):
-        users = payload
+        ip_addresses = payload
     elif isinstance(payload, dict):
         if not payload.get("success"):
             frappe.throw(f"❌ API returned success=false: {payload}")
-        users = payload.get("data") or []
+        ip_addresses = payload.get("data") or []
     else:
         frappe.throw(f"❌ Unexpected API response format: {type(payload)}")
-
+    
     created = 0
     updated = 0
     skipped = 0
     failed = 0
-
-    # 3) Upsert loop
-    for u in users:
+    
+    for ip in ip_addresses:
         mapped = {}
-
         try:
-            external_id = u.get("id")
+            external_id = ip.get("id")
             if not external_id:
                 skipped += 1
                 continue
             
-            branch_name = None
-            if u.get("branch_id"):
-                branch_name = frappe.db.get_value(
-                    "Branch", 
-                    {"custom_external_id":u.get("branch_id")},
+            ip_pool_name = None
+            if ip.get("ip_pool_id"):
+                ip_pool_name = frappe.db.get_value(
+                    "IP Pool", 
+                    {"external_id":ip.get("ip_pool_id")},
                     "name"
                 )
             
             isp_name = None
-            if u.get("isp_id"):
+            if ip.get("isp_id"):
                 isp_name = frappe.db.get_value(
                     "ISP", 
-                    {"external_id":u.get("isp_id")},
+                    {"external_id":ip.get("isp_id")},
                     "name"
                 )
-
+            
+            branch_name = None
+            if ip.get("branch_id"):
+                branch_name = frappe.db.get_value(
+                    "Branch", 
+                    {"custom_external_id":ip.get("branch_id")},
+                    "name"
+                )
+            
             mapped = {
                 "external_id": external_id,
-                "full_name": u.get("name"),
-                "email": u.get("email"),
-                "username": u.get("username"),
-                "dob": u.get("dob"),
-                "phone": u.get("phone"),
-                "address": u.get("address"),
-                "city": u.get("city"),
-                "zip": u.get("zip"),
-                "country": u.get("country"),
-                "branch": branch_name,
-                "identity": u.get("identity"),
+                "ip_pool": ip_pool_name,
+                "ip_address": ip.get("ip_address"),
                 "isp": isp_name,
-                "nas_group": u.get("nas_group"),
-                "created_at": clean_datetime(u.get("created_at")),
-                "updated_at": clean_datetime(u.get("updated_at")),
+                "branch": branch_name,
+                "created_at": clean_datetime(ip.get("created_at")),
+                "updated_at": clean_datetime(ip.get("updated_at")),
             }
-
+            
             # remove None values
             mapped = {k: v for k, v in mapped.items() if v is not None}
-
-            existing = frappe.db.exists("Salesperson", {"external_id": external_id})
-
+            
+            existing = frappe.db.exists("IP Address", {"external_id": external_id})
+            
             if existing:
-                doc = frappe.get_doc("Salesperson", existing)
+                doc = frappe.get_doc("IP Address", existing)
                 doc.update(mapped)
                 doc.save(ignore_permissions=True)
                 updated += 1
             else:
-                doc = frappe.new_doc("Salesperson")
+                doc = frappe.new_doc("IP Address")
                 doc.update(mapped)
                 doc.insert(ignore_permissions=True)
                 created += 1
-
         except Exception as e:
             failed += 1
             frappe.log_error(
-                title="Salesperson Sync Failed",
+                title="IPAddress Sync Failed",
                 message=f"""
-External ID: {u.get("id")}
-Name: {u.get("name")}
+External ID: {ip.get("id")}
+IP Address: {ip.get("ip_address")}
 Error: {str(e)}
 
 Mapped Data:
 {mapped}
 """
             )
-
+    
     frappe.db.commit()
-
+    
     return {
         "success": True,
-        "message": f"✅ Salesperson Sync Completed | Created: {created}, Updated: {updated}, Skipped: {skipped}, Failed: {failed}, Total: {len(users)}",
+        "message": f"✅ IPAddress Sync Completed | Created: {created}, Updated: {updated}, Skipped: {skipped}, Failed: {failed}, Total: {len(ip_addresses)}",
         "created": created,
         "updated": updated,
         "skipped": skipped,
         "failed": failed,
-        "total_api_records": len(users),
+        "total_api_records": len(ip_addresses),
     }

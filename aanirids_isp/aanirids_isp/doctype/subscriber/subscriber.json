@@ -19,14 +19,17 @@
   "section_personal",
   "country",
   "password",
+  "company",
   "column_break_bcbh",
   "date_of_birth",
   "connection_password",
+  "simultaneous_use",
   "section_links",
   "nas_server",
   "package_link",
   "column_break_pvug",
   "salesperson",
+  "branch",
   "section_billing",
   "billing_address",
   "billing_city",
@@ -36,10 +39,12 @@
   "installation_city",
   "installation_zip",
   "section_technical",
+  "notes",
+  "ip_address",
   "cpe_ip_address",
-  "latitude",
   "column_break_ixir",
   "longitude",
+  "latitude",
   "enable_portal_login",
   "section_kyc",
   "id_proof_type",
@@ -299,12 +304,39 @@
   {
    "fieldname": "column_break_ezwx",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "default": "1",
+   "fieldname": "simultaneous_use",
+   "fieldtype": "Data",
+   "label": "Simultaneous Use"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Data",
+   "label": "Notes"
   }
  ],
  "icon": "octicon octicon-file-directory",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-25 21:11:09.407312",
+ "modified": "2026-01-30 18:26:17.571107",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
  "name": "Subscriber",
