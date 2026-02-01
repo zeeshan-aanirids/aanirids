@@ -1,13 +1,16 @@
+# Copyright (c) 2026, Mohammed Zeeshan and contributors
+# For license information, please see license.txt
+
 import frappe
 import requests
 from frappe.model.document import Document
 
 
-class Salesperson(Document):
-    pass
 
+class NASGroup(Document):
+	pass
 
-USERS_API_URL = "http://172.24.160.1:5003/api/users"
+NASGroup_API_URL = "http://172.24.160.1:5003/api/nas-groups"
 TIMEOUT = 30
 
 def clean_datetime(dt):
@@ -27,119 +30,112 @@ def clean_datetime(dt):
         return None
 
 @frappe.whitelist()
-def sync_salespersons():
+def sync_nas_groups():
     """
-    Sync Users from API into Salesperson DocType
+    Sync NAS Groups from API into NASGroup DocType
     Upsert based on external_id (id)
-    Works if API returns LIST or {success:true,data:[...]}
-    """
-
-    # 1) Fetch users
+    Works if API returns LIST or {success:true,data:[...]}"""
     try:
-        r = requests.get(USERS_API_URL, timeout=TIMEOUT)
+        r = requests.get(NASGroup_API_URL, timeout=TIMEOUT)
         r.raise_for_status()
         payload = r.json()
     except Exception as e:
-        frappe.throw(f"❌ Users API fetch failed: {str(e)}")
-
-    # ✅ 2) Handle response type (LIST or DICT)
+        frappe.throw(f"❌ NAS Groups API fetch failed: {str(e)}")
+    
     if isinstance(payload, list):
-        users = payload
+        nas_groups = payload
     elif isinstance(payload, dict):
         if not payload.get("success"):
             frappe.throw(f"❌ API returned success=false: {payload}")
-        users = payload.get("data") or []
+        nas_groups = payload.get("data") or []
     else:
         frappe.throw(f"❌ Unexpected API response format: {type(payload)}")
-
+    
     created = 0
     updated = 0
     skipped = 0
     failed = 0
-
-    # 3) Upsert loop
-    for u in users:
+    
+    for ng in nas_groups:
         mapped = {}
-
         try:
-            external_id = u.get("id")
+            external_id = ng.get("id")
             if not external_id:
                 skipped += 1
                 continue
             
-            branch_name = None
-            if u.get("branch_id"):
-                branch_name = frappe.db.get_value(
-                    "Branch", 
-                    {"custom_external_id":u.get("branch_id")},
+            isp_name = None
+            if ng.get("isp_id"):
+                isp_name = frappe.db.get_value(
+                    "ISP", 
+                    {"external_id":ng.get("isp_id")},
                     "name"
                 )
             
-            isp_name = None
-            if u.get("isp_id"):
-                isp_name = frappe.db.get_value(
-                    "ISP", 
-                    {"external_id":u.get("isp_id")},
+            branch_name = None
+            if ng.get("branch_id"):
+                branch_name = frappe.db.get_value(
+                    "Branch", 
+                    {"custom_external_id":ng.get("branch_id")},
                     "name"
                 )
 
+            nas_name = None
+            if ng.get("nas_id"):
+                nas_name = frappe.db.get_value(
+                    "NAS", 
+                    {"external_id":ng.get("nas_id")},
+                    "name"
+                )
+            
             mapped = {
                 "external_id": external_id,
-                "full_name": u.get("name"),
-                "email": u.get("email"),
-                "username": u.get("username"),
-                "dob": u.get("dob"),
-                "phone": u.get("phone"),
-                "address": u.get("address"),
-                "city": u.get("city"),
-                "zip": u.get("zip"),
-                "country": u.get("country"),
-                "branch": branch_name,
-                "identity": u.get("identity"),
+                "group_name": ng.get("group_name"),
+                "nas_name": nas_name,
                 "isp": isp_name,
-                "nas_group": u.get("nas_group"),
-                "created_at": clean_datetime(u.get("created_at")),
-                "updated_at": clean_datetime(u.get("updated_at")),
+                "branch": branch_name,
+                "created_at": clean_datetime(ng.get("created_at")),
+                "updated_at": clean_datetime(ng.get("updated_at")),
             }
-
+            
             # remove None values
             mapped = {k: v for k, v in mapped.items() if v is not None}
-
-            existing = frappe.db.exists("Salesperson", {"external_id": external_id})
-
+            
+            existing = frappe.db.exists("NAS Group", {"external_id": external_id})
+            
             if existing:
-                doc = frappe.get_doc("Salesperson", existing)
+                doc = frappe.get_doc("NAS Group", existing)
                 doc.update(mapped)
                 doc.save(ignore_permissions=True)
                 updated += 1
             else:
-                doc = frappe.new_doc("Salesperson")
+                doc = frappe.new_doc("NAS Group")
                 doc.update(mapped)
                 doc.insert(ignore_permissions=True)
                 created += 1
-
         except Exception as e:
             failed += 1
             frappe.log_error(
-                title="Salesperson Sync Failed",
+                title="NASGroup Sync Failed",
                 message=f"""
-External ID: {u.get("id")}
-Name: {u.get("name")}
+External ID: {ng.get("id")}
+Group Name: {ng.get("group_name")}
+NAS Name: {ng.get("nas_name")}
 Error: {str(e)}
 
 Mapped Data:
 {mapped}
 """
             )
-
+    
     frappe.db.commit()
-
+    
     return {
         "success": True,
-        "message": f"✅ Salesperson Sync Completed | Created: {created}, Updated: {updated}, Skipped: {skipped}, Failed: {failed}, Total: {len(users)}",
+        "message": f"✅ NASGroup Sync Completed | Created: {created}, Updated: {updated}, Skipped: {skipped}, Failed: {failed}, Total: {len(nas_groups)}",
         "created": created,
         "updated": updated,
         "skipped": skipped,
         "failed": failed,
-        "total_api_records": len(users),
+        "total_api_records": len(nas_groups),
     }

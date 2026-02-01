@@ -5,12 +5,11 @@ from frappe.utils import getdate, now_datetime
 from frappe.model.document import Document
 
 API_URL = "http://172.24.160.1:5003/api/subscribers"
-
 RAD_CHECK_URL = "http://172.24.160.1:5003/api/radcheck"
 RADUSERGROUP_URL = "http://172.24.160.1:5003/api/radusergroup"
 SUBSCRIBER_SERVICES_URL = "http://172.24.160.1:5003/api/subscriber-services"
 
-TIMEOUT = 30
+TIMEOUT = 60
 DEFAULT_LIMIT = 50
 
 
@@ -32,28 +31,18 @@ def build_payload(doc):
         "fullname": doc.full_name,
         "phone": doc.phone,
         "email": doc.email,
-
         "gender": (doc.gender or "").capitalize() if doc.gender else None,
         "country": doc.country,
         "dob": str(doc.date_of_birth) if doc.date_of_birth else None,
-
-        # backend usually expects connection_status not "status"
         "connection_status": 1 if doc.status == "Active" else 0,
-
         "password": doc.password,
         "connection_password": doc.connection_password,
-
-        # Billing address
         "address": doc.billing_address,
         "city": doc.billing_city,
         "zip": doc.billing_zip,
-
-        # Portal / Tech
         "cpe_ip_address": doc.cpe_ip_address,
         "latitude": float(doc.latitude or 0),
         "longitude": float(doc.longitude or 0),
-
-        # Documents
         "identity_type": doc.id_proof_type,
         "identity": doc.id_proof_number,
     }
@@ -73,12 +62,16 @@ def build_payload(doc):
         nas_external_id = frappe.db.get_value("NAS", doc.nas_server, "external_id")
         if nas_external_id:
             payload["nas_id"] = int(nas_external_id)
+    
+    if doc.branch:
+        branch_external_id = frappe.db.get_value("Branch", doc.branch, "external_id")
+        if branch_external_id:
+            payload["branch_id"] = int(branch_external_id)
 
-    # ✅ Remove None values (backend validation will fail sometimes)
+    # ✅ Remove None values
     payload = {k: v for k, v in payload.items() if v is not None}
 
     return payload
-
 
 
 # ============================================================
@@ -119,7 +112,6 @@ def backend_update_subscriber(doc):
         frappe.throw(f"Update API Error {r.status_code}: {r.text}")
 
 
-
 def backend_delete_subscriber(doc):
     """DELETE subscriber in backend."""
     if not doc.external_id:
@@ -130,64 +122,12 @@ def backend_delete_subscriber(doc):
     if r.status_code not in (200, 204):
         frappe.throw(f"Delete API Error {r.status_code}: {r.text}")
 
-def upload_document_to_backend(doc):
-    """
-    Upload document to backend Documents API:
-    owner_id = external_id
-    owner_username = username
-    document_type = document_name
-    file = document_upload
-    """
-    if not doc.external_id:
-        return
-
-    if not getattr(doc, "document_upload", None):
-        return  # no document uploaded
-
-    if not getattr(doc, "document_name", None):
-        frappe.throw("Document Name is required before saving.")
-
-    # ✅ Fetch attached file info from Frappe
-    file_doc = frappe.get_doc("File", {"file_url": doc.document_upload})
-    file_path = file_doc.get_full_path()
-
-    with open(file_path, "rb") as f:
-        files = {"file": f}
-        data = {
-            "owner_id": doc.external_id,
-            "owner_username": doc.username,
-            "document_type": doc.id_proof_type,
-            "file_name": doc.document_name,
-        }
-
-        r = requests.post(
-            "http://172.24.160.1:5003/api/documents",
-            data=data,
-            files=files,
-            timeout=TIMEOUT
-        )
-    
-    frappe.log_error(
-        title="FILE DEBUG",
-        message=f"file_url={doc.document_upload}\nfile_name={file_doc.file_name}\npath={file_path}"
-    )
-
-    if r.status_code not in (200, 201):
-        frappe.throw(f"Document Upload Error {r.status_code}: {r.text}")
-
-    return r.json()
 
 def create_radcheck_for_subscriber(doc):
     if not doc.username:
         frappe.throw("Username is required for Radcheck")
 
-    # pwd = doc.connection_password or doc.password
-    # if not pwd:
-    #     frappe.throw("Password / Connection Password is required for Radcheck")
-
-    payload = {
-        "username": doc.username,
-        }
+    payload = {"username": doc.username}
 
     r = requests.post(RAD_CHECK_URL, json=payload, timeout=TIMEOUT)
     if r.status_code not in (200, 201):
@@ -195,13 +135,12 @@ def create_radcheck_for_subscriber(doc):
 
     return r.json()
 
+
 def create_radusergroup_for_subscriber(doc):
     if not doc.username:
         frappe.throw("Username is required for Radusergroup")
 
-    payload = {
-        "username": doc.username,
-    }
+    payload = {"username": doc.username}
 
     r = requests.post(RADUSERGROUP_URL, json=payload, timeout=TIMEOUT)
     if r.status_code not in (200, 201):
@@ -209,111 +148,143 @@ def create_radusergroup_for_subscriber(doc):
 
     return r.json()
 
+
 def create_subscriber_services_for_subscriber(doc):
     if not doc.external_id:
         frappe.throw("External ID is required for Subscriber Services")
 
+    package_id = frappe.db.get_value("Plan", doc.package_link, "external_id")
+    if not package_id:
+        frappe.throw(f"Package external_id not found for {doc.package_link}")
+
     payload = {
         "subscriber_id": doc.external_id,
-        "package_id": frappe.db.get_value("Plan", doc.package_link, "external_id"),
-        "created_at": now_datetime(),
-        "updated_at": now_datetime(),
+        "package_id": package_id,
+        "created_at": str(now_datetime()),
+        "updated_at": str(now_datetime()),
     }
 
     r = requests.post(SUBSCRIBER_SERVICES_URL, json=payload, timeout=TIMEOUT)
     if r.status_code not in (200, 201):
         frappe.throw(f"Subscriber Services Create Error {r.status_code}: {r.text}")
+    
     return r.json()
 
+
 # ============================================================
-# ✅ DOC CONTROLLER (AUTO CRUD)
+# ✅ ROLLBACK HELPER - Delete backend subscriber if Frappe save fails
+# ============================================================
+def rollback_backend_subscriber(external_id):
+    """Delete subscriber from backend (used when Frappe save fails)."""
+    if not external_id:
+        return
+    
+    try:
+        url = f"{API_URL}/{external_id}"
+        requests.delete(url, timeout=TIMEOUT)
+        frappe.log_error(
+            title="✅ Backend Rollback Success",
+            message=f"Deleted external_id={external_id} due to Frappe validation failure"
+        )
+    except Exception as e:
+        frappe.log_error(
+            title="⚠️ Backend Rollback Failed",
+            message=f"Failed to delete external_id={external_id}: {str(e)}"
+        )
+
+
+# ============================================================
+# ✅ DOC CONTROLLER (OPTIMIZED CRUD)
 # ============================================================
 class Subscriber(Document):
 
-    def before_insert(self):
+    def validate(self):
         """
-        ✅ Create in backend only when user creates manually in Frappe
+        ✅ VALIDATION BEFORE ANY API CALLS
+        Add all your validation logic here
         """
+        # Skip validation for backend sync
         if getattr(self.flags, "from_backend_sync", False):
             return
 
-        # POST create in backend
-        external_id = backend_create_subscriber(self)
-        self.external_id = str(external_id)
+        # Add your validation rules
+        if not self.username:
+            frappe.throw("Username is required")
+        
+        if not self.full_name:
+            frappe.throw("Full Name is required")
+        
+        # Add more validations as needed
+        # This ensures Frappe validates BEFORE we call backend APIs
 
-        # optional flags
-        self.details_synced = 1
-        self.details_synced_on = now_datetime()
-    
+
     def after_insert(self):
-        # """
-        # ✅ After Subscriber is created locally + external_id exists,
-        # upload documents automatically on same Save.
-        # """
-        # if getattr(self.flags, "from_backend_sync", False):
-        #     return
-
-        # try:
-        #     upload_document_to_backend(self)
-        # except Exception as e:
-        #     frappe.log_error(str(e), "Document Upload Failed")
-
         """
-        Call Radcheck only after backend subscriber is created successfully.
+        ✅ ONLY CREATE BACKEND RECORDS AFTER FRAPPE SUCCESSFULLY SAVES
+        This runs AFTER Frappe validation passes and document is inserted
         """
         if getattr(self.flags, "from_backend_sync", False):
             return
 
-        # ✅ Ensure backend subscriber exists
-        if not self.external_id:
-            frappe.throw("Subscriber external_id missing. Cannot create Radcheck.")
+        created_external_id = None
+        
+        try:
+            # Step 1: Create subscriber in backend
+            created_external_id = backend_create_subscriber(self)
+            
+            # Step 2: Update Frappe with external_id (without triggering on_update)
+            frappe.db.set_value(
+                "Subscriber",
+                self.name,
+                {
+                    "external_id": created_external_id,
+                    "details_synced": 1,
+                    "details_synced_on": now_datetime()
+                },
+                update_modified=False
+            )
+            
+            # Update doc object for subsequent operations
+            self.external_id = created_external_id
+            
+            # Step 3: Create Radcheck
+            create_radcheck_for_subscriber(self)
+            frappe.log_error(
+                title="✅ RADCHECK CREATED",
+                message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
+            )
+            
+            # Step 4: Create Radusergroup
+            create_radusergroup_for_subscriber(self)
+            frappe.log_error(
+                title="✅ RADUSERGROUP CREATED",
+                message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
+            )
+            
+            # Step 5: Create Subscriber Services
+            if self.package_link:
+                create_subscriber_services_for_subscriber(self)
+                frappe.log_error(
+                    title="✅ SUBSCRIBER SERVICES CREATED",
+                    message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
+                )
+            
+            frappe.db.commit()
+            
+        except Exception as e:
+            # ⚠️ CRITICAL: Rollback backend if anything fails
+            frappe.log_error(
+                title="❌ Backend Creation Failed",
+                message=f"Subscriber={self.name}\nError: {str(e)}\nRolling back..."
+            )
+            
+            # Rollback backend subscriber
+            if created_external_id:
+                rollback_backend_subscriber(created_external_id)
+            
+            # Re-raise to show error to user
+            frappe.throw(f"Failed to create subscriber in backend: {str(e)}")
 
-        # ✅ Create Radcheck
-        create_radcheck_for_subscriber(self)
-
-        # ✅ (Optional) log success
-        frappe.log_error(
-            title="✅ RADCHECK CREATED",
-            message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
-        )
-
-        """
-        Call Radusergroup only after backend subscriber is created successfully.
-        """
-        if getattr(self.flags, "from_backend_sync", False):
-            return
-
-        # ✅ Ensure backend subscriber exists
-        if not self.external_id:
-            frappe.throw("Subscriber external_id missing. Cannot create Radusergroup.")
-
-        # ✅ Create Radusergroup
-        create_radusergroup_for_subscriber(self)
-
-        # ✅ (Optional) log success
-        frappe.log_error(
-            title="✅ RADUSERGROUP CREATED",
-            message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
-        )
-
-        """
-        Call Subscriber Services only after backend subscriber is created successfully.
-        """
-        if getattr(self.flags, "from_backend_sync", False):
-            return
-
-        # ✅ Ensure backend subscriber exists
-        if not self.external_id:
-            frappe.throw("Subscriber external_id missing. Cannot create Subscriber Services.")
-
-        # ✅ Create Subscriber Services
-        create_subscriber_services_for_subscriber(self)
-
-        # ✅ (Optional) log success
-        frappe.log_error(
-            title="✅ SUBSCRIBER SERVICES CREATED",
-            message=f"Subscriber={self.name}, external_id={self.external_id}, username={self.username}"
-        )
 
     def on_update(self):
         """
@@ -323,8 +294,7 @@ class Subscriber(Document):
         if getattr(self.flags, "from_backend_sync", False):
             return
 
-        # ✅ SUPER IMPORTANT:
-        # Frappe calls on_update after insert also. Prevent PUT immediately after POST.
+        # Skip if this is part of insert flow
         if getattr(self.flags, "in_insert", False):
             return
 
@@ -332,7 +302,15 @@ class Subscriber(Document):
         if not self.external_id:
             return
 
-        backend_update_subscriber(self)
+        try:
+            backend_update_subscriber(self)
+        except Exception as e:
+            frappe.log_error(
+                title="❌ Backend Update Failed",
+                message=f"Subscriber={self.name}\nError: {str(e)}"
+            )
+            frappe.throw(f"Failed to update subscriber in backend: {str(e)}")
+
 
     def on_trash(self):
         """
@@ -341,8 +319,14 @@ class Subscriber(Document):
         if getattr(self.flags, "from_backend_sync", False):
             return
 
-        backend_delete_subscriber(self)
-
+        try:
+            backend_delete_subscriber(self)
+        except Exception as e:
+            frappe.log_error(
+                title="❌ Backend Delete Failed",
+                message=f"Subscriber={self.name}\nError: {str(e)}"
+            )
+            # Don't throw here - allow Frappe deletion even if backend fails
 
 
 # ============================================================

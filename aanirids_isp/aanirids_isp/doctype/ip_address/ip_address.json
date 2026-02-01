@@ -1,58 +1,68 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:shortname",
- "creation": "2026-01-24 16:29:00.893033",
+ "autoname": "field:ip_address",
+ "creation": "2026-01-30 18:05:15.683731",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "external_id",
-  "nasname",
-  "shortname",
-  "type",
-  "ports",
-  "secret"
+  "ip_pool",
+  "ip_address",
+  "isp",
+  "branch",
+  "created_at",
+  "updated_at"
  ],
  "fields": [
   {
    "fieldname": "external_id",
    "fieldtype": "Int",
-   "label": "External ID"
+   "label": "External ID",
+   "read_only": 1
   },
   {
-   "fieldname": "nasname",
-   "fieldtype": "Data",
-   "label": "Nas Name(IP Address)"
+   "fieldname": "ip_pool",
+   "fieldtype": "Link",
+   "label": "IP Pool",
+   "options": "IP Pool"
   },
   {
-   "fieldname": "shortname",
+   "fieldname": "ip_address",
    "fieldtype": "Data",
-   "label": "Shortname",
+   "label": "IP Address",
    "unique": 1
   },
   {
-   "fieldname": "type",
-   "fieldtype": "Data",
-   "label": "Type"
+   "fieldname": "isp",
+   "fieldtype": "Link",
+   "label": "ISP",
+   "options": "ISP"
   },
   {
-   "fieldname": "ports",
-   "fieldtype": "Int",
-   "label": "Ports"
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   },
   {
-   "fieldname": "secret",
-   "fieldtype": "Data",
-   "label": "Secret"
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created at"
+  },
+  {
+   "fieldname": "updated_at",
+   "fieldtype": "Datetime",
+   "label": "Updated at"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-27 14:53:53.919437",
+ "modified": "2026-01-30 18:24:15.519992",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
- "name": "NAS",
+ "name": "IP Address",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

@@ -253,3 +253,6 @@ scheduler_events = {
     ]
 }
 
+doctype_list_js = {
+    "Branch": "public/js/branch_list.js"
+}
