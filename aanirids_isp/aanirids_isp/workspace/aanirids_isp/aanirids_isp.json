@@ -1,0 +1,140 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"f0YBgG8cXd\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Aanirids ISP</span>\",\"col\":12}},{\"id\":\"ybim9S9xf4\",\"type\":\"card\",\"data\":{\"card_name\":\"Subscribers\",\"col\":4}},{\"id\":\"lkAy4ATqrp\",\"type\":\"card\",\"data\":{\"card_name\":\"Packages\",\"col\":4}},{\"id\":\"YkXI55RiTS\",\"type\":\"card\",\"data\":{\"card_name\":\"NAS Management\",\"col\":4}},{\"id\":\"LVHwPEc9Pe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"ISP\",\"col\":3}},{\"id\":\"7Jp5-AL10m\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salesperson\",\"col\":3}},{\"id\":\"fLuc8d3liS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Ip Address\",\"col\":3}},{\"id\":\"C2XlsC9R4B\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branch\",\"col\":3}}]",
+ "creation": "2026-01-30 17:24:23.727370",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "arrow-up-right",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Aanirids ISP",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Packages",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Plans",
+   "link_count": 0,
+   "link_to": "Plan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NAS Management",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NAS",
+   "link_count": 0,
+   "link_to": "NAS",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NAS Group",
+   "link_count": 0,
+   "link_to": "NAS Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NAS IP Pool",
+   "link_count": 0,
+   "link_to": "IP Pool",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscribers",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Subscribers",
+   "link_count": 0,
+   "link_to": "Subscriber",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-02-02 12:41:18.485582",
+ "modified_by": "Administrator",
+ "module": "Aanirids Isp",
+ "name": "Aanirids ISP",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Branch",
+   "link_to": "Branch",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "ISP",
+   "link_to": "ISP",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Ip Address",
+   "link_to": "IP Address",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Salesperson",
+   "link_to": "Salesperson",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Aanirids ISP"
+}
