@@ -7,29 +7,30 @@
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
+  "tab_basic",
   "section_basic",
   "external_id",
   "username",
   "full_name",
-  "phone",
-  "column_break_vdxr",
-  "gender",
-  "email",
-  "status",
-  "section_personal",
-  "country",
-  "password",
-  "company",
-  "column_break_bcbh",
   "date_of_birth",
+  "email",
+  "phone",
+  "gender",
+  "status",
+  "column_break_vdxr",
+  "salesperson",
+  "password",
   "connection_password",
+  "branch",
+  "nas_server",
+  "company",
   "simultaneous_use",
   "section_links",
-  "nas_server",
   "package_link",
-  "column_break_pvug",
-  "salesperson",
-  "branch",
+  "ip_pool",
+  "column_break_pjtl",
+  "ip_address_link",
+  "country",
   "section_billing",
   "billing_address",
   "billing_city",
@@ -40,26 +41,55 @@
   "installation_zip",
   "section_technical",
   "notes",
-  "ip_address",
   "cpe_ip_address",
   "column_break_ixir",
-  "longitude",
   "latitude",
+  "longitude",
   "enable_portal_login",
-  "section_kyc",
+  "section_document_details",
   "id_proof_type",
-  "column_break_bbgm",
+  "column_break_doc",
   "id_proof_number",
   "documents_section",
-  "document_name",
-  "column_break_ezwx",
-  "document_upload",
+  "documents",
+  "tab_service_settings",
+  "section_service_settings",
+  "sms_status",
+  "email_status",
+  "mac_lock_status",
+  "auto_renew_status",
+  "lock_volume_status",
+  "login_log_status",
+  "lock_session_status",
+  "column_break_service_1",
+  "profile_status",
+  "connection_type",
+  "expiration_date",
+  "discount_type",
+  "discount",
+  "column_break_service_2",
+  "total_data_quota",
+  "used_data_quota",
+  "total_session_quota",
+  "used_session_quota",
+  "mac_address",
+  "ip_address",
+  "isp",
+  "tab_sync",
   "section_sync",
   "details_synced",
   "column_break_uzvz",
-  "details_synced_on"
+  "details_synced_on",
+  "section_break_ypeq",
+  "created_at",
+  "tab_documents"
  ],
  "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Info"
+  },
   {
    "fieldname": "section_basic",
    "fieldtype": "Section Break",
@@ -68,6 +98,7 @@
   {
    "fieldname": "external_id",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "External ID",
    "read_only": 1,
    "unique": 1
@@ -101,13 +132,9 @@
    "default": "Active",
    "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Status",
-   "options": "Active\nInactive"
-  },
-  {
-   "fieldname": "section_personal",
-   "fieldtype": "Section Break",
-   "label": "Personal Details"
+   "label": "Connection Status",
+   "options": "Active\nInactive",
+   "read_only": 1
   },
   {
    "fieldname": "gender",
@@ -138,7 +165,7 @@
   {
    "fieldname": "section_links",
    "fieldtype": "Section Break",
-   "label": "Links"
+   "label": "Connection Details"
   },
   {
    "fieldname": "nas_server",
@@ -153,10 +180,27 @@
    "options": "Plan"
   },
   {
+   "fieldname": "ip_pool",
+   "fieldtype": "Link",
+   "label": "IP Pool",
+   "options": "IP Pool"
+  },
+  {
+   "fieldname": "ip_address_link",
+   "fieldtype": "Link",
+   "label": "IP Address",
+   "options": "IP Address"
+  },
+  {
    "fieldname": "salesperson",
    "fieldtype": "Link",
    "label": "Salesperson",
    "options": "Salesperson"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
   },
   {
    "fieldname": "section_billing",
@@ -203,9 +247,10 @@
    "label": "Installation ZIP"
   },
   {
+   "collapsible": 1,
    "fieldname": "section_technical",
    "fieldtype": "Section Break",
-   "label": "Technical"
+   "label": "Portal Details (Optional)"
   },
   {
    "fieldname": "cpe_ip_address",
@@ -214,12 +259,12 @@
   },
   {
    "fieldname": "latitude",
-   "fieldtype": "Float",
+   "fieldtype": "Data",
    "label": "Latitude"
   },
   {
    "fieldname": "longitude",
-   "fieldtype": "Float",
+   "fieldtype": "Data",
    "label": "Longitude"
   },
   {
@@ -229,9 +274,19 @@
    "label": "Enable Portal Login"
   },
   {
-   "fieldname": "section_kyc",
+   "fieldname": "section_document_details",
    "fieldtype": "Section Break",
-   "label": "KYC / Documents"
+   "label": "Document Details"
+  },
+  {
+   "fieldname": "tab_service_settings",
+   "fieldtype": "Tab Break",
+   "label": "Service Settings"
+  },
+  {
+   "fieldname": "section_service_settings",
+   "fieldtype": "Section Break",
+   "label": "Service Settings"
   },
   {
    "fieldname": "id_proof_type",
@@ -243,6 +298,70 @@
    "fieldname": "id_proof_number",
    "fieldtype": "Data",
    "label": "ID Proof Number"
+  },
+  {
+   "fieldname": "profile_status",
+   "fieldtype": "Select",
+   "label": "Profile Status",
+   "options": "\nRegister\nActive (*)\nDisable\nTerminate"
+  },
+  {
+   "fieldname": "connection_type",
+   "fieldtype": "Select",
+   "label": "Connection Type",
+   "options": "\nRadius PPPoE (*)\nRadius Hotspot"
+  },
+  {
+   "fieldname": "expiration_date",
+   "fieldtype": "Datetime",
+   "label": "Expiration Date"
+  },
+  {
+   "fieldname": "lock_volume_status",
+   "fieldtype": "Check",
+   "label": "Lock Volume"
+  },
+  {
+   "fieldname": "login_log_status",
+   "fieldtype": "Check",
+   "label": "Login Log Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lock_session_status",
+   "fieldtype": "Check",
+   "label": "Lock Session"
+  },
+  {
+   "fieldname": "total_data_quota",
+   "fieldtype": "Float",
+   "label": "Total Data Quota (GB)"
+  },
+  {
+   "fieldname": "used_data_quota",
+   "fieldtype": "Float",
+   "label": "Used Data Quota (GB)"
+  },
+  {
+   "fieldname": "total_session_quota",
+   "fieldtype": "Int",
+   "label": "Total Session Quota (Min)"
+  },
+  {
+   "fieldname": "used_session_quota",
+   "fieldtype": "Int",
+   "label": "Used Session Quota (Min)"
+  },
+  {
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "label": "Discount Amount Type",
+   "options": "\nPercentage (%)\nFixed Amount"
+  },
+  {
+   "fieldname": "discount",
+   "fieldtype": "Float",
+   "label": "Discount"
   },
   {
    "fieldname": "section_sync",
@@ -267,10 +386,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_bcbh",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "column_break_ixir",
    "fieldtype": "Column Break"
   },
@@ -279,18 +394,16 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_pvug",
+   "fieldname": "column_break_service_1",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "document_upload",
-   "fieldtype": "Attach",
-   "label": "Document Upload"
+   "fieldname": "column_break_service_2",
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "document_name",
-   "fieldtype": "Data",
-   "label": "Document Name"
+   "fieldname": "column_break_doc",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "documents_section",
@@ -298,18 +411,54 @@
    "label": "Documents"
   },
   {
-   "fieldname": "column_break_bbgm",
-   "fieldtype": "Column Break"
+   "fieldname": "tab_documents",
+   "fieldtype": "Tab Break",
+   "label": "Documents"
   },
   {
-   "fieldname": "column_break_ezwx",
-   "fieldtype": "Column Break"
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "tab_sync",
+   "fieldtype": "Tab Break",
+   "label": "Sync"
   },
   {
+   "fieldname": "documents",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Subscriber Document"
+  },
+  {
+   "fetch_from": "salesperson.branch",
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
    "options": "Branch"
+  },
+  {
+   "fieldname": "mac_address",
+   "fieldtype": "Data",
+   "label": "MAC Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "auto_renew_status",
+   "fieldtype": "Check",
+   "label": "Skip Auto Renew"
+  },
+  {
+   "fieldname": "sms_status",
+   "fieldtype": "Check",
+   "label": "SMS Status"
+  },
+  {
+   "fieldname": "email_status",
+   "fieldtype": "Check",
+   "label": "Email Status"
+  },
+  {
+   "fieldname": "mac_lock_status",
+   "fieldtype": "Check",
+   "label": "Auto Mac Lock"
   },
   {
    "default": "1",
@@ -320,24 +469,42 @@
   {
    "fieldname": "ip_address",
    "fieldtype": "Data",
-   "label": "IP Address"
-  },
-  {
-   "fieldname": "company",
-   "fieldtype": "Data",
-   "label": "Company"
+   "label": "IP Address",
+   "read_only": 1
   },
   {
    "fieldname": "notes",
    "fieldtype": "Data",
    "label": "Notes"
+  },
+  {
+   "fieldname": "section_break_ypeq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created at",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "salesperson.isp",
+   "fieldname": "isp",
+   "fieldtype": "Link",
+   "label": "ISP",
+   "options": "ISP",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_pjtl",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "octicon octicon-file-directory",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-30 18:26:17.571107",
- "modified_by": "Administrator",
+ "modified": "2026-02-11 12:29:58.277236",
+ "modified_by": "bharat@aanirids.com",
  "module": "Aanirids Isp",
  "name": "Subscriber",
  "naming_rule": "By fieldname",
@@ -363,6 +530,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "username",
  "track_changes": 1
 }

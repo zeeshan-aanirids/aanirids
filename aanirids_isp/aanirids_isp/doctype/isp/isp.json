@@ -21,7 +21,9 @@
   {
    "fieldname": "external_id",
    "fieldtype": "Int",
-   "label": "External ID"
+   "label": "External ID",
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "company_name",

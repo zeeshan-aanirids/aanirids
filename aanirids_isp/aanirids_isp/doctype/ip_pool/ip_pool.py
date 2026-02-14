@@ -3,14 +3,27 @@
 
 import frappe
 from frappe.model.document import Document
-import requests
 
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 class IPPool(Document):
 	pass
 
-IP_POOL_API_URL = "http://172.24.160.1:5003/api/ip-pools"
-TIMEOUT = 20
+def clean_datetime(dt):
+    """
+    Convert API datetime string to frappe datetime string.
+    Example: "2025-09-23T03:39:11.000Z" -> "2025-09-23 03:39:11"
+    """
+    if not dt:
+        return None
+    try:
+        dt = str(dt).replace("T", " ").replace("Z", "")
+        # remove milliseconds if present
+        if "." in dt:
+            dt = dt.split(".")[0]
+        return dt.strip()
+    except Exception:
+        return None
 
 @frappe.whitelist()
 def sync_ip_pools():
@@ -19,9 +32,7 @@ def sync_ip_pools():
     Upsert based on external_id
     """
     try:
-        r = requests.get(IP_POOL_API_URL, timeout=TIMEOUT)
-        r.raise_for_status()
-        payload = r.json()
+        payload = get_json("/ip-pools", scope=True)
     except Exception as e:
         frappe.throw(f"❌ IP Pools API fetch failed: {str(e)}")
     
@@ -49,6 +60,22 @@ def sync_ip_pools():
                 {"external_id": row.get("nas_id")},
                 "name"
             )
+        
+        branch_name = None
+        if row.get("branch_id"):
+            branch_name = frappe.db.get_value(
+                "Branch",
+                {"custom_external_id": row.get("branch_id")},
+                "name"
+            )
+        
+        isp_name = None
+        if row.get("isp_id"):
+            isp_name = frappe.db.get_value(
+                "ISP",
+                {"external_id": row.get("isp_id")},
+                "name"
+            )
 
         mapped = {
             "external_id": external_id,
@@ -56,6 +83,11 @@ def sync_ip_pools():
             "network": row.get("network"),
             "subnet": row.get("subnet"),
             "nas": nas_name,
+            "isp": isp_name,
+            "branch": branch_name,
+            "created_by": row.get("created_by_username"),
+            "created_at": clean_datetime(row.get("created_at")),
+            "updated_at": clean_datetime(row.get("updated_at")),
         }
 
         # remove None values

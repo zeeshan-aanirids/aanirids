@@ -10,7 +10,12 @@
   "pool_name",
   "network",
   "subnet",
-  "nas"
+  "nas",
+  "isp",
+  "branch",
+  "created_by",
+  "created_at",
+  "updated_at"
  ],
  "fields": [
   {
@@ -39,12 +44,42 @@
    "fieldtype": "Link",
    "label": "NAS",
    "options": "NAS"
+  },
+  {
+   "fieldname": "isp",
+   "fieldtype": "Link",
+   "label": "ISP",
+   "options": "ISP"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created at",
+   "read_only": 1
+  },
+  {
+   "fieldname": "updated_at",
+   "fieldtype": "Datetime",
+   "label": "Updated at",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-30 18:22:52.860572",
+ "modified": "2026-02-03 11:35:50.697645",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
  "name": "IP Pool",

@@ -11,6 +11,7 @@
   "ip_address",
   "isp",
   "branch",
+  "created_by",
   "created_at",
   "updated_at"
  ],
@@ -54,12 +55,18 @@
    "fieldname": "updated_at",
    "fieldtype": "Datetime",
    "label": "Updated at"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Data",
+   "label": "Created By",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-30 18:24:15.519992",
+ "modified": "2026-02-03 11:43:24.407033",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
  "name": "IP Address",

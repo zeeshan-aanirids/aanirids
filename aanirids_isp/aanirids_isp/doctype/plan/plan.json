@@ -1,8 +1,6 @@
 {
  "actions": [],
  "allow_import": 1,
- "allow_rename": 1,
- "autoname": "field:plan_name",
  "creation": "2026-01-23 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
@@ -11,6 +9,7 @@
   "section_basic",
   "external_id",
   "plan_name",
+  "price",
   "description",
   "status",
   "billing_type",
@@ -37,8 +36,7 @@
    "fieldname": "plan_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Plan Name",
-   "unique": 1
+   "label": "Plan Name"
   },
   {
    "fieldname": "description",
@@ -61,13 +59,15 @@
   },
   {
    "fieldname": "isp",
-   "fieldtype": "Data",
-   "label": "ISP ID"
+   "fieldtype": "Link",
+   "label": "ISP",
+   "options": "ISP"
   },
   {
    "fieldname": "branch",
-   "fieldtype": "Data",
-   "label": "Branch ID"
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   },
   {
    "fieldname": "section_duration",
@@ -85,15 +85,20 @@
    "fieldtype": "Select",
    "label": "Duration Type",
    "options": "Days\nMonths"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price"
   }
  ],
  "icon": "octicon octicon-file-directory",
  "links": [],
- "modified": "2026-01-24 13:21:10.703182",
+ "modified": "2026-02-02 16:40:22.734295",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
  "name": "Plan",
- "naming_rule": "By fieldname",
+ "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
   {
@@ -116,6 +121,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "plan_name",
  "track_changes": 1
 }

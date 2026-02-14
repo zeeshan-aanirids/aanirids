@@ -256,3 +256,12 @@ scheduler_events = {
 doctype_list_js = {
     "Branch": "public/js/branch_list.js"
 }
+
+
+doc_events = {
+    "ToDo": {
+        "after_insert": "aanirids_isp.aanirids_isp.utils.whatsapp.send_task_assignment_whatsapp"
+    }
+}
+
+

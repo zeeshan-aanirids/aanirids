@@ -1,0 +1,121 @@
+{
+    "actions": [],
+    "creation": "2026-02-05 00:00:00.000000",
+    "doctype": "DocType",
+    "document_type": "Document",
+    "engine": "InnoDB",
+    "field_order": [
+        "base_url_section",
+        "base_url",
+        "timeout_seconds",
+        "verify_ssl",
+        "auth_section",
+        "api_token",
+        "scope_section",
+        "default_isp_id",
+        "default_branch_id",
+        "default_user_id",
+        "default_username",
+        "debug_section",
+        "debug_log_requests"
+    ],
+    "fields": [
+        {
+            "fieldname": "base_url_section",
+            "fieldtype": "Section Break",
+            "label": "API"
+        },
+        {
+            "description": "Example: http://172.24.160.1:5003 (\"/api\" is auto-appended if missing)",
+            "fieldname": "base_url",
+            "fieldtype": "Data",
+            "label": "Base URL",
+            "reqd": 1
+        },
+        {
+            "default": "60",
+            "fieldname": "timeout_seconds",
+            "fieldtype": "Int",
+            "label": "Timeout (Seconds)"
+        },
+        {
+            "default": "1",
+            "fieldname": "verify_ssl",
+            "fieldtype": "Check",
+            "label": "Verify SSL"
+        },
+        {
+            "fieldname": "auth_section",
+            "fieldtype": "Section Break",
+            "label": "Auth"
+        },
+        {
+            "description": "Sent as: Authorization: Bearer <token>",
+            "fieldname": "api_token",
+            "fieldtype": "Password",
+            "label": "API Token"
+        },
+        {
+            "fieldname": "scope_section",
+            "fieldtype": "Section Break",
+            "label": "Defaults (Optional)"
+        },
+        {
+            "fieldname": "default_isp_id",
+            "fieldtype": "Int",
+            "label": "Default ISP ID"
+        },
+        {
+            "fieldname": "default_branch_id",
+            "fieldtype": "Int",
+            "label": "Default Branch ID"
+        },
+        {
+            "description": "Used for x-user-id header when calling scoped endpoints like /system-users.",
+            "fieldname": "default_user_id",
+            "fieldtype": "Int",
+            "label": "Default User ID"
+        },
+        {
+            "description": "Used for x-username header when calling scoped endpoints like /system-users.",
+            "fieldname": "default_username",
+            "fieldtype": "Data",
+            "label": "Default Username"
+        },
+        {
+            "fieldname": "debug_section",
+            "fieldtype": "Section Break",
+            "label": "Debug"
+        },
+        {
+            "default": "0",
+            "description": "Logs request method/url/params/json (passwords/tokens are redacted).",
+            "fieldname": "debug_log_requests",
+            "fieldtype": "Check",
+            "label": "Log API Requests"
+        }
+    ],
+    "icon": "fa fa-cog",
+    "issingle": 1,
+    "links": [],
+    "modified": "2026-02-05 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Aanirids Isp",
+    "name": "Aanirids ISP Settings",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 0,
+            "read": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "quick_entry": 0,
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

@@ -2,16 +2,13 @@
 # For license information, please see license.txt
 
 import frappe
-import requests
 from frappe.model.document import Document
 
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 
 class NASGroup(Document):
 	pass
-
-NASGroup_API_URL = "http://172.24.160.1:5003/api/nas-groups"
-TIMEOUT = 30
 
 def clean_datetime(dt):
     """
@@ -36,9 +33,7 @@ def sync_nas_groups():
     Upsert based on external_id (id)
     Works if API returns LIST or {success:true,data:[...]}"""
     try:
-        r = requests.get(NASGroup_API_URL, timeout=TIMEOUT)
-        r.raise_for_status()
-        payload = r.json()
+        payload = get_json("/nas-groups", scope=True)
     except Exception as e:
         frappe.throw(f"❌ NAS Groups API fetch failed: {str(e)}")
     

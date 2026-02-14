@@ -1,13 +1,7 @@
-# Copyright (c) 2026, Mohammed Zeeshan and contributors
-# For license information, please see license.txt
-
 import frappe
-import requests
 from frappe.model.document import Document
-from frappe.utils import get_datetime
 
-ISP_API_URL = "http://172.24.160.1:5003/api/isps"
-TIMEOUT = 20
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 class ISP(Document):
     pass
@@ -36,16 +30,14 @@ def sync_isps():
     Upsert based on external_id
     """
     try:
-        r = requests.get(ISP_API_URL, timeout=TIMEOUT)
-        r.raise_for_status()
-        payload = r.json()
+        payload = get_json("/isps", scope=True)
     except Exception as e:
         frappe.throw(f"❌ ISPs API fetch failed: {str(e)}")
     
     if isinstance(payload, list):
         isps = payload
     elif isinstance(payload, dict):
-        if not payload.get("success"):
+        if payload.get("success") is False:
             frappe.throw(f"❌ API returned success=false: {payload}")
         isps = payload.get("data") or []
     else:
@@ -79,11 +71,13 @@ def sync_isps():
 
         if existing:
             doc = frappe.get_doc("ISP", existing)
+            doc.flags.from_backend_sync = True
             doc.update(mapped)
             doc.save(ignore_permissions=True)
             updated += 1
         else:
             doc = frappe.new_doc("ISP")
+            doc.flags.from_backend_sync = True
             doc.update(mapped)
             doc.insert(ignore_permissions=True)
             created += 1

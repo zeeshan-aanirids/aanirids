@@ -11,7 +11,9 @@
   "shortname",
   "type",
   "ports",
-  "secret"
+  "secret",
+  "created_at",
+  "updated_at"
  ],
  "fields": [
   {
@@ -44,12 +46,22 @@
    "fieldname": "secret",
    "fieldtype": "Data",
    "label": "Secret"
+  },
+  {
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created at"
+  },
+  {
+   "fieldname": "updated_at",
+   "fieldtype": "Datetime",
+   "label": "Updated at"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-27 14:53:53.919437",
+ "modified": "2026-02-03 12:46:00.256573",
  "modified_by": "Administrator",
  "module": "Aanirids Isp",
  "name": "NAS",

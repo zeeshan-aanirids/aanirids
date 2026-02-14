@@ -1,8 +1,7 @@
 import frappe
-import requests
 from frappe.utils import get_datetime
 
-AANIRIDS_BRANCH_API = "http://172.24.160.1:5003/api/branches"
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 
 @frappe.whitelist()
@@ -13,9 +12,7 @@ def sync_branches():
     """
 
     try:
-        response = requests.get(AANIRIDS_BRANCH_API, timeout=20)
-        response.raise_for_status()
-        branches = response.json()
+        branches = get_json("/branches", scope=True)
     except Exception as e:
         frappe.throw(f"Failed to fetch branches: {str(e)}")
 
@@ -45,6 +42,18 @@ def sync_branches():
             "name"
         )
 
+        created_by_name = frappe.db.get_value(
+            "Salesperson",
+            {"external_id": row.get("created_by")},
+            "name"
+        )
+
+        updated_by_name = frappe.db.get_value(
+            "Salesperson",
+            {"external_id": row.get("updated_by")},
+            "name"
+        )
+
         # -------- Field Mapping --------
         doc.custom_external_id = row.get("id")
         doc.branch = row.get("name")
@@ -52,8 +61,8 @@ def sync_branches():
         doc.custom_description = row.get("description")
         doc.custom_unique_token = row.get("unique_token")
         doc.custom_register_token = row.get("register_token")
-        doc.custom_created_by = row.get("created_by")
-        doc.custom_updated_by = row.get("updated_by")
+        doc.custom_created_by = created_by_name
+        doc.custom_updated_by = updated_by_name
 
         if row.get("created_at"):
             doc.custom_created_at = get_datetime(row.get("created_at")).replace(tzinfo=None)

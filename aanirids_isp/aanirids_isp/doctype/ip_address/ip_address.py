@@ -2,15 +2,12 @@
 # For license information, please see license.txt
 
 import frappe
-import requests
 from frappe.model.document import Document
 
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 class IPAddress(Document):
 	pass
-
-IP_ADDRESS_URL = "http://172.24.160.1:5003/api/ip-addresses"
-TIMEOUT = 30
 
 def clean_datetime(dt):
     """
@@ -35,9 +32,7 @@ def sync_ip_addresses():
     Upsert based on external_id (id)
     Works if API returns LIST or {success:true,data:[...]}"""
     try:
-        r = requests.get(IP_ADDRESS_URL, timeout=TIMEOUT)
-        r.raise_for_status()
-        payload = r.json()
+        payload = get_json("/ip-addresses", scope=True)
     except Exception as e:
         frappe.throw(f"❌ IP Addresses API fetch failed: {str(e)}")
     
@@ -93,6 +88,7 @@ def sync_ip_addresses():
                 "ip_address": ip.get("ip_address"),
                 "isp": isp_name,
                 "branch": branch_name,
+                "created_by": ip.get("created_by_username"),
                 "created_at": clean_datetime(ip.get("created_at")),
                 "updated_at": clean_datetime(ip.get("updated_at")),
             }

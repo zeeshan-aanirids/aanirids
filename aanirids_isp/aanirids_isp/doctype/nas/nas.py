@@ -1,5 +1,4 @@
 import frappe
-import requests
 from frappe.model.document import Document
 
 
@@ -7,8 +6,7 @@ class NAS(Document):
     pass
 
 
-NAS_API_URL = "http://172.24.160.1:5003/api/nas/"
-TIMEOUT = 30
+from aanirids_isp.aanirids_isp.api_client import get_json
 
 
 def clean_datetime(dt):
@@ -37,9 +35,7 @@ def sync_nas():
 
     # 1) Fetch API data
     try:
-        r = requests.get(NAS_API_URL, timeout=TIMEOUT)
-        r.raise_for_status()
-        payload = r.json()
+        payload = get_json("/nas", scope=True)
     except Exception as e:
         frappe.throw(f"❌ NAS API fetch failed: {str(e)}")
 
